@@ -12,6 +12,8 @@ import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.rep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class OrganizerService {
     @Autowired
     EventPublisherService eventPublisherService;
 
+    private static final Logger logger = LoggerFactory.getLogger(OrganizerService.class);
+
     /**
      * Creates an event
      * @param maxCapacity
@@ -46,6 +50,7 @@ public class OrganizerService {
      * @param interests
      */
     public void createEvent(int maxCapacity, int duration, String name, String description, LocalDateTime date, Location location, EventType type, Long organizerId, HashSet<Interest> interests) {
+        logger.info("Creating event: " + name);
         User userOrganizer = userRepository.findById(organizerId).orElseThrow(() -> new NotFoundException("Organizer not found"));
         Organizer organizer = new Organizer(userAdapter.mapUserToDomain(userOrganizer));
         if(date.isBefore(LocalDateTime.now()))
