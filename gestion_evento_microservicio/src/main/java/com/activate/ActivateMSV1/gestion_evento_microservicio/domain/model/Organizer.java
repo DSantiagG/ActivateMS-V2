@@ -4,6 +4,9 @@ import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.exc
 import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.exceptions.NotFoundException;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 public class Organizer {
@@ -11,6 +14,8 @@ public class Organizer {
     @Getter
     @Setter
     private ArrayList<Event> organizedEvents;
+
+    Logger logger = LoggerFactory.getLogger(Organizer.class);
 
     public Organizer(User user) {
         this.user = user;
@@ -28,6 +33,7 @@ public class Organizer {
                 return true;
             }
         }
+        logger.error("Failed to cancel event due to event not found");
         throw new NotFoundException("Unable to cancel the event. Event not found");
     }
 
