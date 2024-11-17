@@ -17,6 +17,11 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @GetMapping("/hello")
+    public String hello(@RequestHeader("Authorization") String authorizationHeader) {
+        System.out.println("Authorization Header: " + authorizationHeader); // Log del token
+        return "Hello from EventController";
+    }
     /**
      * Get an event by id
      * @param eventId Event id
