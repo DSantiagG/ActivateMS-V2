@@ -3,6 +3,8 @@ package com.activate.ActivateMSV1.gestion_evento_microservicio.ui.controller;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.application.service.EventService;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.dto.request.EvaluationRequest;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.repository.event.query.model.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,8 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @GetMapping("/hello")
-    public String hello(@RequestHeader("Authorization") String authorizationHeader) {
-        System.out.println("Authorization Header: " + authorizationHeader); // Log del token
-        return "Hello from EventController";
-    }
+    Logger logger = LoggerFactory.getLogger(EventController.class);
+
     /**
      * Get an event by id
      * @param eventId Event id
@@ -30,6 +29,7 @@ public class EventController {
      */
     @GetMapping("/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) {
+        logger.info("Received request to get event with id: " + eventId);
         Event event = eventService.getEvent(eventId);
         return ResponseEntity.ok(event);
     }
@@ -54,6 +54,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/type")
     public ResponseEntity<?> updateType(@PathVariable Long eventId) {
+        logger.info("Received request to update type of event with id: " + eventId);
         eventService.updateType(eventId);
         return ResponseEntity.noContent().build();
     }
@@ -66,6 +67,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/maxCapacity")
     public ResponseEntity<?> updateMaxCapacity(@PathVariable Long eventId, @RequestParam int maxCapacity) {
+        logger.info("Received request to update max capacity of event with id: " + eventId + " to " + maxCapacity);
         eventService.updateMaxCapacity(eventId, maxCapacity);
         return ResponseEntity.noContent().build();
     }
@@ -78,6 +80,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/date")
     public ResponseEntity<?> updateDate(@PathVariable Long eventId, @RequestParam LocalDateTime date) {
+        logger.info("Received request to update date of event with id: " + eventId + " to " + date);
         eventService.updateDate(eventId, date);
         return ResponseEntity.noContent().build();
     }
@@ -90,6 +93,7 @@ public class EventController {
      */
     @PostMapping("/{eventId}/evaluation")
     public ResponseEntity<?> addEvaluation(@PathVariable Long eventId, @RequestBody EvaluationRequest request) {
+        logger.info("Received request to add evaluation to event with id: " + eventId);
         eventService.addEvaluation(eventId, request.getComment(), request.getScore(), request.getParticipantId());
         return ResponseEntity.created(null).build();
     }
@@ -102,6 +106,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/participant/{participantId}")
     public ResponseEntity<?> addParticipant(@PathVariable Long eventId, @PathVariable Long participantId){
+        logger.info("Received request to add participant with id: " + participantId + " to event with id: " + eventId);
         eventService.addParticipant(eventId, participantId);
         return ResponseEntity.noContent().build();
     }
@@ -114,6 +119,7 @@ public class EventController {
      */
     @DeleteMapping("/{eventId}/participant/{participantId}")
     public ResponseEntity<?> removeParticipant(@PathVariable Long eventId, @PathVariable Long participantId) {
+        logger.info("Received request to remove participant with id: " + participantId + " from event with id: " + eventId);
         eventService.removeParticipant(eventId, participantId);
         return ResponseEntity.noContent().build();
     }
@@ -125,6 +131,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/start")
     public ResponseEntity<?> startEvent(@PathVariable Long eventId) {
+        logger.info("Received request to start event with id: " + eventId);
         eventService.startEvent(eventId);
         return ResponseEntity.noContent().build();
     }
@@ -136,6 +143,7 @@ public class EventController {
      */
     @PutMapping("/{eventId}/finish")
     public ResponseEntity <?> finishEvent(@PathVariable Long eventId) {
+        logger.info("Received request to finish event with id: " + eventId);
         eventService.finishEvent(eventId);
         return ResponseEntity.noContent().build();
     }

@@ -4,10 +4,14 @@ import com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.Event
 import com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.EventInfo;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.Participant;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.exceptions.DomainException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventDomainService {
+
+    Logger logger = LoggerFactory.getLogger(EventDomainService.class);
 
     /**
      * Add a participant to an event
@@ -17,8 +21,10 @@ public class EventDomainService {
      */
     public boolean addParticipant(Event event, Participant participant){
         EventInfo e = mapEventToEventInfo(event);
-        if(!participant.isAvailable(e))
-            throw new DomainException("The participant is already registered in an event at the same date and time: "+e.getDate().toString());
+        if(!participant.isAvailable(e)) {
+            logger.error("Failed to add participant to event: participant is not available");
+            throw new DomainException("The participant is already registered in an event at the same date and time: " + e.getDate().toString());
+        }
         if (event.addParticipant(participant)){
             participant.getParticipatedEvents().add(e);
             return true;

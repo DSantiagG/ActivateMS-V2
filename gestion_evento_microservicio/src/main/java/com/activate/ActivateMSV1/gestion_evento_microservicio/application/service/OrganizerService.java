@@ -12,6 +12,8 @@ import com.activate.ActivateMSV1.gestion_evento_microservicio.infrastructure.rep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class OrganizerService {
     @Autowired
     EventPublisherService eventPublisherService;
 
+    private static final Logger logger = LoggerFactory.getLogger(OrganizerService.class);
+
     /**
      * Creates an event
      * @param maxCapacity
@@ -48,8 +52,10 @@ public class OrganizerService {
     public void createEvent(int maxCapacity, int duration, String name, String description, LocalDateTime date, Location location, EventType type, Long organizerId, HashSet<Interest> interests) {
         User userOrganizer = userRepository.findById(organizerId).orElseThrow(() -> new NotFoundException("Organizer not found"));
         Organizer organizer = new Organizer(userAdapter.mapUserToDomain(userOrganizer));
-        if(date.isBefore(LocalDateTime.now()))
+        if(date.isBefore(LocalDateTime.now())) {
+            logger.error("Failed to create event due to  invalid date");
             throw new DomainException("The event date cannot be earlier than the current date");
+        }
         com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.Event event = new com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.Event(-1L, maxCapacity, duration, name, description, date, location, type, organizer, interests);
         organizer.createEvent(event);
 

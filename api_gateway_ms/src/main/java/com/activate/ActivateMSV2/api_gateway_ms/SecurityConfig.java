@@ -12,9 +12,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity) {
-        httpSecurity.authorizeExchange(exchanges -> exchanges.anyExchange().authenticated())
-                        .oauth2Login(Customizer.withDefaults());
-        httpSecurity.csrf(crsf -> crsf.disable());
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .authorizeExchange(exchanges -> exchanges.anyExchange().authenticated())
+                .oauth2Login(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                .oauth2Client(Customizer.withDefaults());
         return httpSecurity.build();
     }
 }

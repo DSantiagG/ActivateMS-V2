@@ -2,6 +2,8 @@ package com.activate.ActivateMSV1.gestion_evento_microservicio.ui.controller;
 
 import com.activate.ActivateMSV1.gestion_evento_microservicio.application.service.ParticipantService;
 import com.activate.ActivateMSV1.gestion_evento_microservicio.domain.model.EventInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ public class ParticipantController {
     @Autowired
     private ParticipantService participantService;
 
+    Logger logger = LoggerFactory.getLogger(ParticipantController.class);
+
     /**
      * Get all events of a participant
      * @param participantId Participant id
@@ -25,6 +29,7 @@ public class ParticipantController {
      */
     @GetMapping("/{participantId}")
     public ResponseEntity<?> getParticipantEvents(@PathVariable Long participantId) {
+        logger.info("Received request to get events of participant with id: " + participantId);
         ArrayList<EventInfo> events = participantService.getParticipantEvents(participantId);
         if (events.size() == 0) {
             return ResponseEntity.notFound().build();
