@@ -17,26 +17,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    /**
-     * Creates a new user.
-     *
-     * Accepts a `UserDTO` in the request body and uses `UserService` to create and save the user.
-     * Returns a `201 Created` status on success, or `400 Bad Request` with an error message on failure.
-     *
-     * @param userDTO The user's data (name, age, email, interests, location).
-     * @return `201 Created` on success, or `400 Bad Request` on error.
-     */
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO) {
-        try {
-            userService.createUser(userDTO.getName(), userDTO.getAge(), userDTO.getEmail(), userDTO.getInterests(), userDTO.getLocation());
-            System.out.println("Usuario creado exitosamente");
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado exitosamente");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+
 
     /**
      * Retrieves a user by their ID.

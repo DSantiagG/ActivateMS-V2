@@ -25,15 +25,7 @@ public class UserService {
     @Autowired
     private UserPublisherService userPublisherService;
 
-    public void createUser(String name, int age, String email, Set<InterestDTO> interests, LocationDTO locationDTO) throws Exception {
-        Location location = new Location(locationDTO.getLatitude(), locationDTO.getLongitude());
-        HashSet<InterestDTO> interestsSet = new HashSet<>(interests);
-        User user = new User(-1L, name, age, email, interestsSet,location);
-        ModUser userMapped = userAdapter.mapDomainUserToModel(user);
-        userRepository.save(userMapped);
-        userPublisherService.publishUserToEvent(userMapped);
-        userPublisherService.publishUserToRecommendation(userMapped);
-    }
+
 
     public UserDTO getUserById(Long id) throws Exception {
         ModUser user = userRepository.findById(id).orElseThrow(() -> new Exception("Usuario no encontrado"));

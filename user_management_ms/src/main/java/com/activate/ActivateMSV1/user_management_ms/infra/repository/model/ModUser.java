@@ -33,4 +33,12 @@ public class ModUser {
     @Embedded
     private ModLocation location;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Credentials credentials;
+
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
+        credentials.setUser(this); // Sincronizar relación
+    }
+
 }
