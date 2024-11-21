@@ -13,16 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
-        return httpSecurity
-                .csrf(csrg -> csrg.disable())
-                .authorizeHttpRequests(req->
-                        req.requestMatchers("/auth/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        return http.build();
     }
 }
