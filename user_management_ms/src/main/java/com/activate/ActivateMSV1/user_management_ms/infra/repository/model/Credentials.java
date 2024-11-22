@@ -3,11 +3,13 @@ package com.activate.ActivateMSV1.user_management_ms.infra.repository.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @AllArgsConstructor
 @Table(name = "credentials")
+@NoArgsConstructor
 public class Credentials {
 
     @Id

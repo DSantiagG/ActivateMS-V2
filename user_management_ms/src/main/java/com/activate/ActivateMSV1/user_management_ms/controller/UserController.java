@@ -2,6 +2,8 @@ package com.activate.ActivateMSV1.user_management_ms.controller;
 
 import com.activate.ActivateMSV1.user_management_ms.infra.dto.UserDTO;
 import com.activate.ActivateMSV1.user_management_ms.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
 
     /**
@@ -32,10 +35,11 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         try {
             UserDTO user = userService.getUserById(id);
-            System.out.println("Usuario"+id +" encontrado");
+            logger.info("User {} found", id);
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            System.out.println("Usuario"+id +" NO encontrado");
+            logger.error("User {} not found", id);
+            logger.error("Error searching user: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
@@ -52,10 +56,10 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         try {
             List<UserDTO> users = userService.getUsers();
-            System.out.println("Usuarios encontrados");
+            logger.info("Users found");
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error searching users: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
@@ -75,10 +79,10 @@ public class UserController {
     public ResponseEntity<String> editProfile(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         try {
             userService.editProfile(id, userDTO.getName(), userDTO.getAge(), userDTO.getEmail());
-            System.out.println("Perfil actualiado exitosamente");
-            return ResponseEntity.ok("Perfil actualizado exitosamente");
+            logger.info("Profile {} updated successfully",id);
+            return ResponseEntity.ok("Profile updated successfully");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error updating profile {} : {}",id,e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -97,10 +101,10 @@ public class UserController {
     public ResponseEntity<String> addInterest(@PathVariable Long id, @RequestBody InterestRequestDTO interestDTO) {
         try {
             userService.addInterest(id, interestDTO.getInterest());
-            System.out.printf("Interés agregado exitosamente");
-            return ResponseEntity.ok("Interés agregado exitosamente");
+            logger.info("Interest added successfully to user {}",id);
+            return ResponseEntity.ok("Interest added successful");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error adding interest to user {} : {}",id,e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -119,10 +123,10 @@ public class UserController {
     public ResponseEntity<String> deleteInterest(@PathVariable Long id, @RequestBody InterestRequestDTO interestDTO) {
         try {
             userService.deleteInterest(id, interestDTO.getInterest());
-            System.out.printf("Interés eliminado exitosamente");
-            return ResponseEntity.ok("Interés eliminado exitosamente");
+            logger.info("Interest removed successfully to user {}",id);
+            return ResponseEntity.ok("Interest removed successful");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error deleting interest to user {} : {}",id,e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -142,10 +146,10 @@ public class UserController {
     public ResponseEntity<String> updateLocation(@PathVariable Long id, @RequestBody LocationDTO locationDTO) {
         try {
             userService.udpateLocation(id, locationDTO);
-            System.out.printf("Ubicación actualizada");
-            return ResponseEntity.ok("Ubicación actualizada");
+            logger.info("Location updated successfully to user {}",id);
+            return ResponseEntity.ok("Location updated successful");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error updating location to user {} : {}",id,e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

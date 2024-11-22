@@ -3,6 +3,8 @@ package com.activate.ActivateMSV1.user_management_ms.controller;
 import com.activate.ActivateMSV1.user_management_ms.infra.dto.RequestRegisterDTO;
 import com.activate.ActivateMSV1.user_management_ms.infra.dto.UserDTO;
 import com.activate.ActivateMSV1.user_management_ms.service.AuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    Logger logger = LoggerFactory.getLogger(AuthController.class);
     /**
      * Creates a new user.
      *
@@ -29,12 +32,15 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody RequestRegisterDTO userDTO) {
+        String msg;
         try {
             authService.createUser(userDTO.getFirstName(),userDTO.getLastName(), userDTO.getAge(), userDTO.getEmail(), userDTO.getInterests(), userDTO.getLocation(),userDTO.getUsername(), userDTO.getPassword());
-            System.out.println("Usuario creado exitosamente");
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado exitosamente");
+            msg="User "+userDTO.getUsername()+" created successfully";
+            logger.info(msg);
+            return ResponseEntity.status(HttpStatus.CREATED).body(msg);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            msg="Error creating user: "+ userDTO.getUsername()+" ---- \n"+e.getMessage();
+            logger.error(msg);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

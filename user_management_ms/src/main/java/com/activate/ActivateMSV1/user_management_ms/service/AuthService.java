@@ -1,5 +1,6 @@
 package com.activate.ActivateMSV1.user_management_ms.service;
 
+import com.activate.ActivateMSV1.user_management_ms.controller.AuthController;
 import com.activate.ActivateMSV1.user_management_ms.domain.Location;
 import com.activate.ActivateMSV1.user_management_ms.domain.User;
 import com.activate.ActivateMSV1.user_management_ms.infra.dto.InterestDTO;
@@ -10,6 +11,8 @@ import com.activate.ActivateMSV1.user_management_ms.infra.repository.Credentials
 import com.activate.ActivateMSV1.user_management_ms.infra.repository.UserRepository;
 import com.activate.ActivateMSV1.user_management_ms.infra.repository.model.Credentials;
 import com.activate.ActivateMSV1.user_management_ms.infra.repository.model.ModUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ public class AuthService {
     @Autowired
     private KeycloakService keycloakService;
 
+    Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     public void createUser(String firstName,String lastName, int age, String email, Set<InterestDTO> interests, LocationDTO locationDTO,String userName , String password) throws Exception {
         Location location = new Location(locationDTO.getLatitude(), locationDTO.getLongitude());
@@ -51,11 +55,17 @@ public class AuthService {
         userMapped.setCredentials(credentials);
         userRepository.save(userMapped);
 
+        logger.info("User {} created successfully in the database", userName);
+
         UserKeycloakDTO userKeycloakDTO = new UserKeycloakDTO(userName, email, firstName, lastName, password);
         keycloakService.createUser(userKeycloakDTO);
 
+        logger.info("User {} created successfully in keycloak", userName);
+
         userPublisherService.publishUserToEvent(userMapped);
+        logger.info("User info {} published to events-ms", userName);
         userPublisherService.publishUserToRecommendation(userMapped);
+        logger.info("User info {} published to recommendation-ms", userName);
     }
 
 }

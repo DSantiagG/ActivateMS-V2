@@ -12,8 +12,6 @@ public class UserManagementMsApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(UserManagementMsApplication.class, args);
-		Logger logger = LoggerFactory.getLogger(UserManagementMsApplication.class);
-		logger.info("Corriendo con actuator");
 	}
 
 }
