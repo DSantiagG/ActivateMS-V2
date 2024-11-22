@@ -11,7 +11,7 @@ import org.keycloak.admin.client.resource.UsersResource;
 
 public class KeycloakProvider {
 
-    private static final String SERVER_URL="http://localhost:8085";
+    private static final String SERVER_URL="http://host.docker.internal:8085";
     private static final String REALM_NAME="Activate-realm";
     private static final String REALM_MASTER="master";
     private static final String ADMIN_CLI="admin-cli";
