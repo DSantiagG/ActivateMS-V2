@@ -40,10 +40,10 @@ public class AuthService {
     private KeycloakService keycloakService;
 
 
-    public void createUser(String name, int age, String email, Set<InterestDTO> interests, LocationDTO locationDTO,String userName , String password) throws Exception {
+    public void createUser(String firstName,String lastName, int age, String email, Set<InterestDTO> interests, LocationDTO locationDTO,String userName , String password) throws Exception {
         Location location = new Location(locationDTO.getLatitude(), locationDTO.getLongitude());
         HashSet<InterestDTO> interestsSet = new HashSet<>(interests);
-        User user = new User(-1L, name, age, email, interestsSet,location);
+        User user = new User(-1L,firstName +" "+ lastName, age, email, interestsSet,location);
         ModUser userMapped = userAdapter.mapDomainUserToModel(user);
         Credentials credentials = new Credentials(null,userName,
                 passwordEncoder.encode(password),
@@ -51,7 +51,7 @@ public class AuthService {
         userMapped.setCredentials(credentials);
         userRepository.save(userMapped);
 
-        UserKeycloakDTO userKeycloakDTO = new UserKeycloakDTO(userName, email, name, name, password);
+        UserKeycloakDTO userKeycloakDTO = new UserKeycloakDTO(userName, email, firstName, lastName, password);
         keycloakService.createUser(userKeycloakDTO);
 
         userPublisherService.publishUserToEvent(userMapped);

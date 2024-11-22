@@ -7,7 +7,8 @@ import java.util.Set;
 @Data
 public class RequestRegisterDTO {
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private int age;
     private String email;
     private Set<InterestDTO> interests;

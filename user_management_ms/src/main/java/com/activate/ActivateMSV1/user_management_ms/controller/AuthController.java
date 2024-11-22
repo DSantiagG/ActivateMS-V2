@@ -30,7 +30,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody RequestRegisterDTO userDTO) {
         try {
-            authService.createUser(userDTO.getName(), userDTO.getAge(), userDTO.getEmail(), userDTO.getInterests(), userDTO.getLocation(),userDTO.getUsername(), userDTO.getPassword());
+            authService.createUser(userDTO.getFirstName(),userDTO.getLastName(), userDTO.getAge(), userDTO.getEmail(), userDTO.getInterests(), userDTO.getLocation(),userDTO.getUsername(), userDTO.getPassword());
             System.out.println("Usuario creado exitosamente");
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado exitosamente");
         } catch (Exception e) {
