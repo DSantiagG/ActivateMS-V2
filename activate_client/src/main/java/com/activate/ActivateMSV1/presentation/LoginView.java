@@ -35,6 +35,9 @@ public class LoginView {
     private JTextField txtLongitude;
     private JLabel lblStatus;
     private JPasswordField pwdFieldPassword;
+    private JTextField txtUsername;
+    private JTextField txtLastNames;
+    private JPasswordField pwdPassword;
 
     private JFrame frame;
     private TokenManager tokenManager = new TokenManager();
@@ -72,16 +75,13 @@ public class LoginView {
 
                 try {
                     tokenManager.setTokens(UserService.login(username, password));
-                    //TODO: ESTO ES PARA PROBAR, DEBERIA SER CON EL USERNAME
-                    user = UserService.getUser(1L, tokenManager.getAccessToken());
-                    user.getId();
-                     /*user = UserService.getUser(idUser);
-                     user.getId();*/
+                    user = UserService.getUser(username, tokenManager.getAccessToken());
+
                 } catch (Exception ex) {
                     lblStatus.setText("Usuario no encontrado");
                     return;
                 }
-                ParticipantView participantView = new ParticipantView(frame, user, tokenManager);
+                ParticipantView participantView = new ParticipantView(frame, user, tokenManager, username);
                 participantView.show();
                 frame.setVisible(false);
             }
@@ -97,11 +97,10 @@ public class LoginView {
                 UserDTO user=null;
 
                 try {
+
                     tokenManager.setTokens(UserService.login(username, password));
-                    //TODO: ESTO ES PARA PROBAR, DEBERIA SER CON EL USERNAME
-                    user = UserService.getUser(1L, tokenManager.getAccessToken());
-                     /*user = UserService.getUser(idUser);
-                     user.getId();*/
+                    user = UserService.getUser(username, tokenManager.getAccessToken());
+
                 } catch (Exception ex) {
                     lblStatus.setText("Usuario no encontrado");
                     return;
@@ -167,31 +166,36 @@ public class LoginView {
         RequestRegisterDTO user = new RequestRegisterDTO();
         LocationDTO locationUser = new LocationDTO();
         //Validar Campos
-        if(isTextFieldEmpty(txtName,"El nombre es obligatorio"))return;
+        if(isTextFieldEmpty(txtName,"Los nombres son obligatorios"))return;
+        if(isTextFieldEmpty(txtLastNames,"Los apellidos son obligatorios"))return;
+        if(isTextFieldEmpty(txtUsername,"El usuario es obligatorio"))return;
+        if(isPasswordFieldEmpty(pwdPassword,"La contraseña es obligatoria"))return;
         if(isTextFieldEmpty(txtEmail,"El email es obligatorio"))return;
+        if(isTextFieldEmpty(txtUsername,"El email es obligatorio"))return;
         if(isTextFieldNotPositiveNumeric(txtAge,"La edad debe ser numerica"))return;
         if(isTextFieldNotNumeric(txtLatitude,"La latitude debe ser numerica"))return;
         if(isTextFieldNotNumeric(txtLongitude,"La longitud debe ser numerica"))return;
 
         //Llenar DTO
         user.setFirstName(txtName.getText());
+        user.setLastName(txtLastNames.getText());
         user.setEmail(txtEmail.getText());
         user.setAge(Integer.parseInt(txtAge.getText()));
         locationUser.setLongitude(Double.parseDouble(txtLongitude.getText()));
         locationUser.setLatitude(Double.parseDouble(txtLatitude.getText()));
         user.setLocation(locationUser);
         user.setInterests(new HashSet<>(interests));
-
-        //TODO: TEMPORALES
-        user.setLastName("");
-        user.setUsername("userPrueba");
-        user.setUsername("1234");
+        user.setUsername(txtUsername.getText());
+        user.setPassword(new String(pwdPassword.getPassword()));
 
         boolean status = false;
         try {
             UserService.registerUser(user);
             lblStatus.setText("Usuario registrado correctamente");
             txtName.setText("");
+            txtLastNames.setText("");
+            txtUsername.setText("");
+            pwdPassword.setText("");
             txtEmail.setText("");
             txtAge.setText("");
             txtLatitude.setText("");
@@ -200,7 +204,7 @@ public class LoginView {
             interests.clear();
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            lblStatus.setText(e.getMessage());
+            lblStatus.setText("Error al registrar usuario");
         }
 
 

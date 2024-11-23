@@ -15,9 +15,8 @@ public class App
     {
         LoginView loginView = new LoginView();
         loginView.show();
-
         //TODO: BORRAR
-        ArrayList<EventInfoDTO> recommendedEvents = new ArrayList<>();
+        /*ArrayList<EventInfoDTO> recommendedEvents = new ArrayList<>();
         TokenManager tokenManager = new TokenManager();
         try{
             tokenManager.setTokens(UserService.login("test", "test"));
@@ -30,6 +29,6 @@ public class App
             System.out.println(event.getName());
             System.out.println(event.getDescription());
             System.out.println(event.getInterests());
-        });
+        });*/
     }
 }

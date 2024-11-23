@@ -44,6 +44,19 @@ public class UserController {
         }
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
+        try {
+            UserDTO user = userService.getUserByUsername(username);
+            logger.info(" {} found", username);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            logger.error("{} not found", username);
+            logger.error("Error searching {}: {}",username, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     /**
      * Retrieves all users.
      *
@@ -153,5 +166,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+
 }
 

@@ -52,6 +52,7 @@ public class ParticipantView {
     private JLabel lblEventEvaluation;
     private JLabel lblEvaluation;
     private JLabel lblComment;
+    private JTextField txtUsername;
 
     private ArrayList<EventInfoDTO> recommendedEvents;
     private ArrayList<EventInfoDTO> myEvents;
@@ -60,15 +61,16 @@ public class ParticipantView {
     private JFrame loginFrame;
     private JFrame frame;
     private UserDTO user;
-
+    private String username;
     private TokenManager tokenManager;
     private Map<String, InterestDTO> interestMap = new HashMap<>();
 
 
-    public ParticipantView(JFrame loginFrame,UserDTO user, TokenManager tokenManager) {
+    public ParticipantView(JFrame loginFrame,UserDTO user, TokenManager tokenManager,String username) {
         this.loginFrame = loginFrame;
         this.user = user;
         this.tokenManager = tokenManager;
+        this.username = username;
         frame = new JFrame("Participant");
         frame.setContentPane(ParticipantPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -138,6 +140,7 @@ public class ParticipantView {
                 sendEvaluation();
             }
         });
+        this.txtUsername.setText(username);
     }
 
     public void show() {
@@ -345,9 +348,9 @@ public class ParticipantView {
         if(isTextFieldNotNumeric(txtLongitude,"La longitud debe ser numerica"))return;
         location.setLatitude(Double.parseDouble(txtLatitude.getText()));
         location.setLongitude(Double.parseDouble(txtLongitude.getText()));
-        user.setLocation(location);
         try {
             UserService.updateLocation(user.getId(),location, tokenManager.getAccessToken());
+            user.setLocation(location);
             fillParticipantInfo();
             lblStatus.setText("Ubicación actualizada");
         } catch (Exception e) {

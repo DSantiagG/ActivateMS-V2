@@ -18,7 +18,7 @@ public class UserService {
     private static String apiUrl = "http://localhost:8084/api/activate/user";
     private static String loginUrl = "http://localhost:8085/realms/Activate-realm/protocol/openid-connect/token";
     private static String client_id = "activate-gateway-client";
-    private static String client_secret = "uCmpDlxU3W8iPOSlNsR9ZeRwB8BG3Lm4";
+    private static String client_secret = "c8AyYWdC6MIoqzxv6xhWa8HLKVWt2y3T";
 
     public static KeycloakResponse login(String username, String password) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -70,7 +70,7 @@ public class UserService {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(user);
-        String url = "http://localhost:8084/auth/register";
+        String url = "http://localhost:8082/auth/register";
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", "application/json");
         postRequest.setEntity(new StringEntity(jsonString));
@@ -87,9 +87,9 @@ public class UserService {
         }
     }
 
-    public static UserDTO getUser(Long id, String token) throws Exception {
+    public static UserDTO getUser(String username, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        String url = apiUrl + "/" + id;
+        String url = apiUrl + "/username/" + username;
         HttpGet getRequest = new HttpGet(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -103,8 +103,10 @@ public class UserService {
             String jsonResponse = EntityUtils.toString(response.getEntity());
             UserDTO user = mapper.readValue(jsonResponse, UserDTO.class);
             httpClient.close();
+
             return user;
         } else {
+
             String responseBody = EntityUtils.toString(response.getEntity());
             ErrorResponse errorResponse = mapper.readValue(responseBody, ErrorResponse.class);
             httpClient.close();

@@ -5,7 +5,9 @@ import com.activate.ActivateMSV1.user_management_ms.domain.Location;
 import com.activate.ActivateMSV1.user_management_ms.domain.User;
 import com.activate.ActivateMSV1.user_management_ms.infra.dto.*;
 import com.activate.ActivateMSV1.user_management_ms.infra.mappers.UserAdapter;
+import com.activate.ActivateMSV1.user_management_ms.infra.repository.CredentialsRepository;
 import com.activate.ActivateMSV1.user_management_ms.infra.repository.UserRepository;
+import com.activate.ActivateMSV1.user_management_ms.infra.repository.model.Credentials;
 import com.activate.ActivateMSV1.user_management_ms.infra.repository.model.ModUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private CredentialsRepository credentialsRepository;
+
+    @Autowired
     private UserAdapter userAdapter;
 
     @Autowired
@@ -33,6 +38,12 @@ public class UserService {
 
     public UserDTO getUserById(Long id) throws Exception {
         ModUser user = userRepository.findById(id).orElseThrow(() -> new Exception("User "+id +" not found"));
+        return userAdapter.mapModelUserToDTO(user);
+    }
+
+    public UserDTO getUserByUsername(String Username) throws Exception {
+        Credentials credentials = credentialsRepository.findByUsername(Username).orElseThrow(() -> new Exception("User "+Username +" not found"));
+        ModUser user =  userRepository.findById(credentials.getUser().getId()).orElseThrow(() -> new Exception("User "+credentials.getUser().getId() +" not found"));
         return userAdapter.mapModelUserToDTO(user);
     }
 
