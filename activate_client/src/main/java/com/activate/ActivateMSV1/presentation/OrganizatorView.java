@@ -3,6 +3,7 @@ package com.activate.ActivateMSV1.presentation;
 import com.activate.ActivateMSV1.infra.DTO.*;
 import com.activate.ActivateMSV1.infra.util.GUIVerifier;
 import com.activate.ActivateMSV1.service.EventService;
+import com.activate.ActivateMSV1.service.TokenManager;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -58,6 +59,7 @@ public class OrganizatorView {
     private JFrame loginFrame;
     private JFrame frame;
 
+    private TokenManager tokenManager;
     private ArrayList<InterestDTO> interests = new ArrayList<>();
 
     Map<String, InterestDTO> interestMap = new HashMap<>();
@@ -69,7 +71,7 @@ public class OrganizatorView {
     Boolean editMode;
     Boolean edditing;
 
-    public OrganizatorView(JFrame loginFrame, Long organizerId, String organizerName) {
+    public OrganizatorView(JFrame loginFrame, Long organizerId, String organizerName, TokenManager tokenManager) {
 
         this.loginFrame = loginFrame;
         this.organizerId = organizerId;
@@ -77,6 +79,7 @@ public class OrganizatorView {
         this.eventIdSelected = -1L;
         this.editMode = false;
         this.edditing = false;
+        this.tokenManager = tokenManager;
 
         frame = new JFrame("Organizator");
         frame.setContentPane(OrganizatorPanel);
@@ -159,6 +162,7 @@ public class OrganizatorView {
             @Override
             public void windowClosed(WindowEvent e) {
                 loginFrame.setVisible(true);
+                tokenManager.clearTokens();
             }
         });
     }
@@ -190,7 +194,7 @@ public class OrganizatorView {
 
     private void initializeCbxEvent(){
         try{
-            ArrayList<EventDTO> events = EventService.getEventsByOrganizer(organizerId);
+            ArrayList<EventDTO> events = EventService.getEventsByOrganizer(organizerId, tokenManager.getAccessToken());
             DefaultComboBoxModel<String> eventModel = new DefaultComboBoxModel<>();
             eventModel.addElement("Seleccione un evento");
             for(EventDTO event : events){
@@ -262,7 +266,7 @@ public class OrganizatorView {
         );
 
         try{
-            boolean response = EventService.postEvent(event, organizerId);
+            boolean response = EventService.postEvent(event, organizerId, tokenManager.getAccessToken());
             if(response){
                 GUIVerifier.showMessage("Evento creado exitosamente");
                 eventIdSelected = -1L;
@@ -288,7 +292,7 @@ public class OrganizatorView {
         }
         Long selectedEvent = Long.parseLong(cbxEvent.getSelectedItem().toString());
         try{
-            EventDTO event = EventService.getEvent(selectedEvent);
+            EventDTO event = EventService.getEvent(selectedEvent, tokenManager.getAccessToken());
             if(event != null){
                 eventIdSelected = selectedEvent;
 
@@ -327,7 +331,7 @@ public class OrganizatorView {
             return;
         }
         try{
-            boolean response = EventService.cancelEvent(organizerId, eventIdSelected);
+            boolean response = EventService.cancelEvent(organizerId, eventIdSelected, tokenManager.getAccessToken());
             if(response){
                 GUIVerifier.showMessage("Evento cancelado exitosamente");
             }
@@ -356,14 +360,14 @@ public class OrganizatorView {
         }else{
             EventDTO event;
             try{
-                event = EventService.getEvent(eventIdSelected);
+                event = EventService.getEvent(eventIdSelected, tokenManager.getAccessToken());
             }catch (Exception e){
                 System.out.println(e.getMessage());
                 return;
             }
             if(event.getMaxCapacity() != Integer.parseInt(tfMaxCapacity.getText())){
                 try{
-                    boolean response = EventService.updateMaxCapacity(eventIdSelected, Integer.parseInt(tfMaxCapacity.getText()));
+                    boolean response = EventService.updateMaxCapacity(eventIdSelected, Integer.parseInt(tfMaxCapacity.getText()), tokenManager.getAccessToken());
                     if(response){
                         GUIVerifier.showMessage("Capacidad máxima actualizada exitosamente");
                     }
@@ -374,7 +378,7 @@ public class OrganizatorView {
             }
             if(!event.getDate().equals(LocalDateTime.parse(tfDate.getText()))){
                 try{
-                    boolean response = EventService.updateDate(eventIdSelected, LocalDateTime.parse(tfDate.getText()));
+                    boolean response = EventService.updateDate(eventIdSelected, LocalDateTime.parse(tfDate.getText()), tokenManager.getAccessToken());
                     if(response){
                         GUIVerifier.showMessage("Fecha actualizada exitosamente");
                     }
@@ -385,7 +389,7 @@ public class OrganizatorView {
             }
             if(event.getType().toString() != cbxType.getSelectedItem()){
                 try{
-                    boolean response = EventService.updateEventType(eventIdSelected);
+                    boolean response = EventService.updateEventType(eventIdSelected, tokenManager.getAccessToken());
                     if(response){
                         GUIVerifier.showMessage("Tipo de evento actualizado exitosamente");
                     }
@@ -417,7 +421,7 @@ public class OrganizatorView {
             return;
         }
         try{
-            boolean response = EventService.startEvent(eventIdSelected);
+            boolean response = EventService.startEvent(eventIdSelected, tokenManager.getAccessToken());
             if(response){
                 GUIVerifier.showMessage("Evento iniciado exitosamente");
             }
@@ -433,7 +437,7 @@ public class OrganizatorView {
             return;
         }
         try{
-            boolean response = EventService.finishEvent(eventIdSelected);
+            boolean response = EventService.finishEvent(eventIdSelected, tokenManager.getAccessToken());
             if(response){
                 GUIVerifier.showMessage("Evento finalizado exitosamente");
             }

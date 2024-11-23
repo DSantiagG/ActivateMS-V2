@@ -14,13 +14,14 @@ import org.apache.http.util.EntityUtils;
 import java.util.ArrayList;
 
 public class RecommendationService {
-    private static String apiUrl = "http://localhost:8081/api/activate/recommendation";
+    private static String apiUrl = "http://localhost:8084/api/activate/recommendation";
 
-    public static ArrayList<EventInfoDTO> getRecommendedEvents(Long userId)  throws Exception {
+    public static ArrayList<EventInfoDTO> getRecommendedEvents(Long userId, String token)  throws Exception {
 
             CloseableHttpClient httpClient = HttpClients.createDefault();
             String url = apiUrl + "/" + userId;
             HttpGet getRequest = new HttpGet(url);
+            getRequest.addHeader("Authorization", "Bearer " + token);
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
 

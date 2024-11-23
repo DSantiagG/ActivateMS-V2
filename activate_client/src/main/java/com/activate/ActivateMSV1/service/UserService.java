@@ -15,13 +15,62 @@ import org.apache.http.util.EntityUtils;
 
 public class UserService {
 
-    private static String apiUrl = "http://localhost:8082/api/activate/user";
+    private static String apiUrl = "http://localhost:8084/api/activate/user";
+    private static String loginUrl = "http://localhost:8085/realms/Activate-realm/protocol/openid-connect/token";
+    private static String client_id = "activate-gateway-client";
+    private static String client_secret = "uCmpDlxU3W8iPOSlNsR9ZeRwB8BG3Lm4";
 
-    public static boolean registerUser(UserDTO user) throws Exception {
+    public static KeycloakResponse login(String username, String password) throws Exception {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost postRequest = new HttpPost(loginUrl);
+        postRequest.addHeader("content-type", "application/x-www-form-urlencoded");
+
+        StringEntity params = new StringEntity("client_id="+client_id+"&client_secret="+client_secret+"&username=" + username + "&password=" + password + "&grant_type=password");
+        postRequest.setEntity(params);
+
+        HttpResponse response = httpClient.execute(postRequest);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 200) {
+            String jsonResponse = EntityUtils.toString(response.getEntity());
+            ObjectMapper mapper = new ObjectMapper();
+            KeycloakResponse keycloakResponse = mapper.readValue(jsonResponse, KeycloakResponse.class);
+            httpClient.close();
+            return keycloakResponse;
+        } else {
+            String responseBody = EntityUtils.toString(response.getEntity());
+            httpClient.close();
+            throw new Exception(responseBody);
+        }
+    }
+
+    public static KeycloakResponse refreshToken(String refreshToken) throws Exception {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost postRequest = new HttpPost(loginUrl);
+        postRequest.addHeader("content-type", "application/x-www-form-urlencoded");
+
+        StringEntity params = new StringEntity("client_id=" + client_id + "&client_secret=" + client_secret + "&refresh_token=" + refreshToken + "&grant_type=refresh_token");
+        postRequest.setEntity(params);
+
+        HttpResponse response = httpClient.execute(postRequest);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 200) {
+            String jsonResponse = EntityUtils.toString(response.getEntity());
+            ObjectMapper mapper = new ObjectMapper();
+            KeycloakResponse keycloakResponse = mapper.readValue(jsonResponse, KeycloakResponse.class);
+            httpClient.close();
+            return keycloakResponse;
+        } else {
+            String responseBody = EntityUtils.toString(response.getEntity());
+            httpClient.close();
+            throw new Exception(responseBody);
+        }
+    }
+
+    public static boolean registerUser(RequestRegisterDTO user) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(user);
-        String url = apiUrl;
+        String url = "http://localhost:8084/auth/register";
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", "application/json");
         postRequest.setEntity(new StringEntity(jsonString));
@@ -38,12 +87,13 @@ public class UserService {
         }
     }
 
-    public static UserDTO getUser(Long id) throws Exception {
+    public static UserDTO getUser(Long id, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + id;
         HttpGet getRequest = new HttpGet(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        getRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(getRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -62,7 +112,7 @@ public class UserService {
         }
     }
 
-    public static boolean updateProfile(UserDTO user) throws Exception {
+    public static boolean updateProfile(UserDTO user, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(user);
@@ -70,6 +120,7 @@ public class UserService {
         HttpPut putRequest = new HttpPut(url);
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(new StringEntity(jsonString));
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
 
@@ -84,12 +135,13 @@ public class UserService {
         }
     }
 
-    public static boolean addInterest(Long userId, InterestRequestDTO interest) throws Exception{
+    public static boolean addInterest(Long userId, InterestRequestDTO interest, String token) throws Exception{
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(interest);
         String url = apiUrl+"/"+userId+"/interests/add";
         HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("Authorization", "Bearer " + token);
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(new StringEntity(jsonString));
 
@@ -106,12 +158,13 @@ public class UserService {
         }
     }
 
-    public static boolean removeInterest(Long userId, InterestRequestDTO interest) throws Exception {
+    public static boolean removeInterest(Long userId, InterestRequestDTO interest, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(interest);
         String url = apiUrl+"/"+userId+"/interests/remove";
         HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("Authorization", "Bearer " + token);
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(new StringEntity(jsonString));
 
@@ -128,12 +181,13 @@ public class UserService {
         }
     }
 
-    public static boolean updateLocation(Long userId, LocationDTO location) throws Exception{
+    public static boolean updateLocation(Long userId, LocationDTO location, String token) throws Exception{
         CloseableHttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(location);
         String url = apiUrl+"/"+userId+"/location";
         HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("Authorization", "Bearer " + token);
         putRequest.addHeader("content-type", "application/json");
         putRequest.setEntity(new StringEntity(jsonString));
 

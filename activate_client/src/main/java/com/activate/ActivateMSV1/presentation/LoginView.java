@@ -2,8 +2,10 @@ package com.activate.ActivateMSV1.presentation;
 
 import com.activate.ActivateMSV1.infra.DTO.InterestDTO;
 import com.activate.ActivateMSV1.infra.DTO.LocationDTO;
+import com.activate.ActivateMSV1.infra.DTO.RequestRegisterDTO;
 import com.activate.ActivateMSV1.infra.DTO.UserDTO;
 import com.activate.ActivateMSV1.infra.util.GUIVerifier;
+import com.activate.ActivateMSV1.service.TokenManager;
 import com.activate.ActivateMSV1.service.UserService;
 
 import javax.swing.*;
@@ -32,8 +34,10 @@ public class LoginView {
     private JTextField txtLatitude;
     private JTextField txtLongitude;
     private JLabel lblStatus;
+    private JPasswordField pwdFieldPassword;
 
     private JFrame frame;
+    private TokenManager tokenManager = new TokenManager();
 
     //Intereses
     private Map<String, InterestDTO> interestMap = new HashMap<>();
@@ -60,17 +64,24 @@ public class LoginView {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if(isTextFieldNotPositiveNumeric(txtIdLogin, "El id debe ser numerico"))return;
-                Long idUser = Long.parseLong(txtIdLogin.getText());
+                if(isTextFieldEmpty(txtIdLogin, "El nombre de usuario es obligatorio"))return;
+                if(isPasswordFieldEmpty(pwdFieldPassword,"La contraseña es obligatoria"))return;
+                String username = txtIdLogin.getText();
+                String password = new String(pwdFieldPassword.getPassword());
                 UserDTO user=null;
+
                 try {
-                     user = UserService.getUser(idUser);
-                     user.getId();
+                    tokenManager.setTokens(UserService.login(username, password));
+                    //TODO: ESTO ES PARA PROBAR, DEBERIA SER CON EL USERNAME
+                    user = UserService.getUser(1L, tokenManager.getAccessToken());
+                    user.getId();
+                     /*user = UserService.getUser(idUser);
+                     user.getId();*/
                 } catch (Exception ex) {
                     lblStatus.setText("Usuario no encontrado");
                     return;
                 }
-                ParticipantView participantView = new ParticipantView(frame, user);
+                ParticipantView participantView = new ParticipantView(frame, user, tokenManager);
                 participantView.show();
                 frame.setVisible(false);
             }
@@ -79,20 +90,24 @@ public class LoginView {
         btnLoginAsOrganizator.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(isTextFieldNotPositiveNumeric(txtIdLogin, "El id debe ser numerico"))return;
-                Long idUser = Long.parseLong(txtIdLogin.getText());
-                String userName = "";
-
+                if(isTextFieldEmpty(txtIdLogin, "El nombre de usuario es obligatorio"))return;
+                if(isPasswordFieldEmpty(pwdFieldPassword,"La contraseña es obligatoria"))return;
+                String username = txtIdLogin.getText();
+                String password = new String(pwdFieldPassword.getPassword());
                 UserDTO user=null;
+
                 try {
-                    user = UserService.getUser(idUser);
-                    userName = user.getName();
+                    tokenManager.setTokens(UserService.login(username, password));
+                    //TODO: ESTO ES PARA PROBAR, DEBERIA SER CON EL USERNAME
+                    user = UserService.getUser(1L, tokenManager.getAccessToken());
+                     /*user = UserService.getUser(idUser);
+                     user.getId();*/
                 } catch (Exception ex) {
                     lblStatus.setText("Usuario no encontrado");
                     return;
                 }
 
-                OrganizatorView organizatorViewView = new OrganizatorView(frame, idUser, userName);
+                OrganizatorView organizatorViewView = new OrganizatorView(frame, user.getId(), username, tokenManager);
                 organizatorViewView.show();
                 frame.setVisible(false);
             }
@@ -149,7 +164,7 @@ public class LoginView {
     }
 
     private void registerUser() {
-        UserDTO user = new UserDTO();
+        RequestRegisterDTO user = new RequestRegisterDTO();
         LocationDTO locationUser = new LocationDTO();
         //Validar Campos
         if(isTextFieldEmpty(txtName,"El nombre es obligatorio"))return;
@@ -159,13 +174,18 @@ public class LoginView {
         if(isTextFieldNotNumeric(txtLongitude,"La longitud debe ser numerica"))return;
 
         //Llenar DTO
-        user.setName(txtName.getText());
+        user.setFirstName(txtName.getText());
         user.setEmail(txtEmail.getText());
         user.setAge(Integer.parseInt(txtAge.getText()));
         locationUser.setLongitude(Double.parseDouble(txtLongitude.getText()));
         locationUser.setLatitude(Double.parseDouble(txtLatitude.getText()));
         user.setLocation(locationUser);
         user.setInterests(new HashSet<>(interests));
+
+        //TODO: TEMPORALES
+        user.setLastName("");
+        user.setUsername("userPrueba");
+        user.setUsername("1234");
 
         boolean status = false;
         try {
@@ -179,6 +199,7 @@ public class LoginView {
             lblInterests.setText("");
             interests.clear();
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             lblStatus.setText(e.getMessage());
         }
 

@@ -22,15 +22,15 @@ import java.util.Set;
 
 public class EventService {
 
-    private static String apiUrl = "http://localhost:8080/api/activate/event";
+    private static String apiUrl = "http://localhost:8084/api/activate/event";
 
-    public static boolean postEvent(EventInfoDTO event, Long organizerId) throws  Exception {
+    public static boolean postEvent(EventInfoDTO event, Long organizerId, String token) throws  Exception {
             CloseableHttpClient httpClient = HttpClients.createDefault();
 
             String url = apiUrl + "/organizer";  // URL del evento a crear
 
             HttpPost postRequest = new HttpPost(url);
-
+            postRequest.addHeader("Authorization", "Bearer " + token);
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
 
@@ -53,11 +53,12 @@ public class EventService {
                 throw new Exception(errorResponse.getMessage());
             }
     }
-    public static EventDTO getEvent(Long eventId) throws Exception {
+    public static EventDTO getEvent(Long eventId, String token) throws Exception {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId;
         HttpGet getRequest = new HttpGet(url);
+        getRequest.addHeader("Authorization", "Bearer " + token);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
@@ -77,11 +78,12 @@ public class EventService {
         }
     }
 
-    public static ArrayList<EventDTO> getEventsByOrganizer(Long organizerId) throws Exception {
+    public static ArrayList<EventDTO> getEventsByOrganizer(Long organizerId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet getRequest = new HttpGet(apiUrl);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        getRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(getRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -105,12 +107,13 @@ public class EventService {
         }
     }
 
-    public static boolean cancelEvent(Long organizerId, Long eventId) throws Exception {
+    public static boolean cancelEvent(Long organizerId, Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/organizer/" + organizerId + "/cancel/" + eventId;
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -126,13 +129,13 @@ public class EventService {
         }
     }
 
-    public static boolean updateEventType(Long eventId) throws Exception {
+    public static boolean updateEventType(Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/type";
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-
+        putRequest.addHeader("Authorization", "Bearer " + token);
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
 
@@ -147,12 +150,13 @@ public class EventService {
         }
     }
 
-    public static boolean updateMaxCapacity(Long eventId, int maxCapacity) throws Exception {
+    public static boolean updateMaxCapacity(Long eventId, int maxCapacity, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/maxCapacity?maxCapacity=" + maxCapacity;
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -168,12 +172,13 @@ public class EventService {
         }
     }
 
-    public static boolean  updateDate(Long eventId, LocalDateTime date) throws Exception {
+    public static boolean  updateDate(Long eventId, LocalDateTime date, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/date?date=" + date;
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -189,12 +194,13 @@ public class EventService {
         }
     }
 
-    public static boolean startEvent (Long eventId) throws Exception {
+    public static boolean startEvent (Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/start";
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -210,12 +216,13 @@ public class EventService {
         }
     }
 
-    public static boolean finishEvent (Long eventId) throws Exception {
+    public static boolean finishEvent (Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/finish";
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -231,12 +238,13 @@ public class EventService {
         }
     }
 
-    public static void participate(Long userId, Long eventId) throws Exception {
+    public static void participate(Long userId, Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/participant/" + userId;
         HttpPut putRequest = new HttpPut(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        putRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(putRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -251,12 +259,13 @@ public class EventService {
         }
     }
 
-    public static ArrayList<EventInfoDTO> getParticipantEvents(Long id) throws Exception {
+    public static ArrayList<EventInfoDTO> getParticipantEvents(Long id, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/participant/" + id;
         HttpGet getRequest = new HttpGet(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        getRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(getRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -276,12 +285,13 @@ public class EventService {
         }
     }
 
-    public static void quitEvent(Long userId, Long eventId) throws Exception {
+    public static void quitEvent(Long userId, Long eventId, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/" + eventId + "/participant/" + userId;
         HttpDelete deleteRequest = new HttpDelete(url);
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        deleteRequest.addHeader("Authorization", "Bearer " + token);
 
         HttpResponse response = httpClient.execute(deleteRequest);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -296,7 +306,7 @@ public class EventService {
         }
     }
 
-    public static void sendEvaluation(Long userId, Long eventId, String comment, int score) throws Exception {
+    public static void sendEvaluation(Long userId, Long eventId, String comment, int score, String token) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String url = apiUrl + "/"+ eventId + "/evaluation";
         HttpPost postRequest = new HttpPost(url);
@@ -304,6 +314,7 @@ public class EventService {
 
         String jsonInString = mapper.writeValueAsString(new EvaluationRequest(comment, score, userId));
 
+        postRequest.addHeader("Authorization", "Bearer " + token);
         postRequest.addHeader("content-type", "application/json");
         postRequest.setEntity(new StringEntity(jsonInString));
 

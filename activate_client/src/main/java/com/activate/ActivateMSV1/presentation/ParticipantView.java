@@ -2,10 +2,7 @@ package com.activate.ActivateMSV1.presentation;
 
 import com.activate.ActivateMSV1.infra.DTO.*;
 import com.activate.ActivateMSV1.infra.util.GUIVerifier;
-import com.activate.ActivateMSV1.service.EventService;
-import com.activate.ActivateMSV1.service.NotificationConsumer;
-import com.activate.ActivateMSV1.service.RecommendationService;
-import com.activate.ActivateMSV1.service.UserService;
+import com.activate.ActivateMSV1.service.*;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -64,12 +61,14 @@ public class ParticipantView {
     private JFrame frame;
     private UserDTO user;
 
+    private TokenManager tokenManager;
     private Map<String, InterestDTO> interestMap = new HashMap<>();
 
 
-    public ParticipantView(JFrame loginFrame,UserDTO user) {
+    public ParticipantView(JFrame loginFrame,UserDTO user, TokenManager tokenManager) {
         this.loginFrame = loginFrame;
         this.user = user;
+        this.tokenManager = tokenManager;
         frame = new JFrame("Participant");
         frame.setContentPane(ParticipantPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -147,6 +146,7 @@ public class ParticipantView {
             @Override
             public void windowClosed(WindowEvent e) {
                 notificationConsumer.closeConnection();
+                tokenManager.clearTokens();
                 loginFrame.setVisible(true);
             }
         });
@@ -175,7 +175,7 @@ public class ParticipantView {
 
     private void reloadRecommendedEvents(){
         try{
-            recommendedEvents = RecommendationService.getRecommendedEvents(user.getId());
+            recommendedEvents = RecommendationService.getRecommendedEvents(user.getId(), tokenManager.getAccessToken());
         }catch (Exception e){
             cbxRecommendedEvents.removeAllItems();
             cbxRecommendedEvents.addItem("Seleccione un evento");
@@ -201,7 +201,7 @@ public class ParticipantView {
         int index = cbxRecommendedEvents.getSelectedIndex();
         EventInfoDTO event = recommendedEvents.get(index-1);
         try {
-            EventService.participate(user.getId(), event.getId());
+            EventService.participate(user.getId(), event.getId(), tokenManager.getAccessToken());
             GUIVerifier.showMessage("Te has inscrito al evento "+ event.getName() + "\n");
             cbxMyEvents.setSelectedIndex(0);
         } catch (Exception e) {
@@ -214,7 +214,7 @@ public class ParticipantView {
         int index = cbxMyEvents.getSelectedIndex();
         EventInfoDTO event = myEvents.get(index-1);
         try {
-            EventService.quitEvent(user.getId(), event.getId());
+            EventService.quitEvent(user.getId(), event.getId(), tokenManager.getAccessToken());
             GUIVerifier.showMessage("Te has desinscrito del evento "+ event.getName() + "\n");
             cbxMyEvents.setSelectedIndex(0);
         } catch (Exception e) {
@@ -233,7 +233,7 @@ public class ParticipantView {
         int index = cbxMyEvents.getSelectedIndex();
         EventInfoDTO event = myEvents.get(index-1);
         try {
-            EventService.sendEvaluation(user.getId(), event.getId(), txaComment.getText(), Integer.parseInt(cbxCalification.getSelectedItem().toString()));
+            EventService.sendEvaluation(user.getId(), event.getId(), txaComment.getText(), Integer.parseInt(cbxCalification.getSelectedItem().toString()), tokenManager.getAccessToken());
             GUIVerifier.showMessage("Evaluación enviada");
             txaComment.setText("");
             cbxCalification.setSelectedIndex(0);
@@ -245,7 +245,7 @@ public class ParticipantView {
 
     private void reloadMyEvents(){
         try {
-            myEvents = EventService.getParticipantEvents(user.getId());
+            myEvents = EventService.getParticipantEvents(user.getId(), tokenManager.getAccessToken());
         } catch (Exception e) {
             cbxMyEvents.removeAllItems();
             cbxMyEvents.addItem("Seleccione un evento");
@@ -328,7 +328,7 @@ public class ParticipantView {
         newProfile.setAge(Integer.parseInt(txtAge.getText()));
         newProfile.setEmail(txtEmail.getText());
         try {
-            UserService.updateProfile(newProfile);
+            UserService.updateProfile(newProfile, tokenManager.getAccessToken());
             user.setName(newProfile.getName());
             user.setAge(newProfile.getAge());
             user.setEmail(newProfile.getEmail());
@@ -347,7 +347,7 @@ public class ParticipantView {
         location.setLongitude(Double.parseDouble(txtLongitude.getText()));
         user.setLocation(location);
         try {
-            UserService.updateLocation(user.getId(),location);
+            UserService.updateLocation(user.getId(),location, tokenManager.getAccessToken());
             fillParticipantInfo();
             lblStatus.setText("Ubicación actualizada");
         } catch (Exception e) {
@@ -362,7 +362,7 @@ public class ParticipantView {
         InterestRequestDTO request = new InterestRequestDTO();
         request.setInterest(interestDTO);
         try {
-            UserService.addInterest(user.getId(),request);
+            UserService.addInterest(user.getId(),request, tokenManager.getAccessToken());
             user.getInterests().add(interestDTO);
             fillParticipantInfo();
             lblStatus.setText("Interes agregado");
@@ -378,7 +378,7 @@ public class ParticipantView {
         InterestRequestDTO request = new InterestRequestDTO();
         request.setInterest(interestDTO);
         try {
-            UserService.removeInterest(user.getId(),request);
+            UserService.removeInterest(user.getId(),request, tokenManager.getAccessToken());
             user.getInterests().remove(interestDTO);
             fillParticipantInfo();
             lblStatus.setText("Interes eliminado");

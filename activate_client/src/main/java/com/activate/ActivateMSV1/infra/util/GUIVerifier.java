@@ -85,6 +85,16 @@ public class GUIVerifier {
         return result;
     }
 
+    public static boolean isPasswordFieldEmpty(JPasswordField passwordField, String message) {
+        boolean result = false;
+        if (passwordField.getPassword().length == 0) {
+            showMessage(message);
+            passwordField.requestFocus();
+            result = true;
+        }
+        return result;
+    }
+
     /**
      * Method to get the current date.
      * @param format Date format.
