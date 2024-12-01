@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - GESTION_EVENTO_URI=http://host.docker.internal:8080
+      - RECOMMENDATION_URI=http://host.docker.internal:8081
+      - USER_MANAGEMENT_URI=http://host.docker.internal:8082
+      - KEYCLOAK_ISSUER_URI=http://149.130.167.142:8080/realms/Activate-realm
+      - KEYCLOAK_JWK_URI=http://149.130.167.142:8080/realms/Activate-realm/protocol/openid-connect/certs
+      - KEYCLOAK_CLIENT_ID=activate-gateway-client
+      - KEYCLOAK_CLIENT_SECRET=CxDIPAMkgigIQd8JN2Y1k4QNp4zZmRqH
+      - KEYCLOAK_REDIRECT_URI=http://149.130.167.142:8080/login/oauth2/code/activate-gateway-client
+      - ACTUATOR_PATH=/actuator
+    networks:
+      - shared_network  # Hace referencia a la red compartida
+
+networks:
+  shared_network:
+    external: true

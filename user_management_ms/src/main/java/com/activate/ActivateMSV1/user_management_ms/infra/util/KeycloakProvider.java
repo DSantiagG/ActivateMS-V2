@@ -11,13 +11,13 @@ import org.keycloak.admin.client.resource.UsersResource;
 
 public class KeycloakProvider {
 
-    private static final String SERVER_URL="http://host.docker.internal:8085";
+    private static final String SERVER_URL="http://149.130.167.142:8080";
     private static final String REALM_NAME="Activate-realm";
     private static final String REALM_MASTER="master";
     private static final String ADMIN_CLI="admin-cli";
     private static final String USER_CONSOLE="admin";
     private static final String PASSWORD_CONSOLE="admin";
-    private static final String CLIENT_SECRET="dMzixocMGeo8c5gb8jg60jgIqDtmPinZ";
+    private static final String CLIENT_SECRET="CxDIPAMkgigIQd8JN2Y1k4QNp4zZmRqH";
 
     public static RealmResource getRealmResource() {
         Keycloak keycloak = KeycloakBuilder.builder()

@@ -23,6 +23,9 @@ services:
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - KEYCLOAK_ISSUER_URI=${KEYCLOAK_ISSUER_URI}
       - KEYCLOAK_JWK_SET_URI=${KEYCLOAK_JWK_SET_URI}
+    networks:
+      - shared_network  # Hace referencia a la red compartida
+      - postgresbd_network
 
   postgresbd:
     image: postgres:alpine
@@ -40,3 +43,12 @@ services:
       interval: 5s
       timeout: 1s
       retries: 5
+    networks:
+      - postgresbd_network
+
+networks:
+  postgresbd_network:
+    driver: bridge
+
+  shared_network:
+    external: true
