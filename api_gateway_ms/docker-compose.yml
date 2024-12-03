@@ -16,7 +16,7 @@ services:
       - KEYCLOAK_JWK_URI=http://149.130.167.142:8080/realms/Activate-realm/protocol/openid-connect/certs
       - KEYCLOAK_CLIENT_ID=activate-gateway-client
       - KEYCLOAK_CLIENT_SECRET=CxDIPAMkgigIQd8JN2Y1k4QNp4zZmRqH
-      - KEYCLOAK_REDIRECT_URI=http://149.130.167.142:8080/login/oauth2/code/activate-gateway-client
+      - KEYCLOAK_REDIRECT_URI=http://localhost:8084/login/oauth2/code/activate-gateway-client
       - ACTUATOR_PATH=/actuator
     networks:
       - shared_network  # Hace referencia a la red compartida
