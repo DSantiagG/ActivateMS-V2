@@ -7,6 +7,21 @@ docker-compose up -d
 echo "RabbitMQ is running"
 pause
 
+:: ---------- Api Gateway------------------
+cd api_gateway_ms
+
+docker-compose down
+docker rmi api_gateway_ms-api-gateway:latest
+
+:: Crear .jar en un subproceso
+start /wait cmd /c "mvn clean package -DskipTests"
+
+:: Levantar contenedor
+docker-compose up -d
+cd ..
+echo "Api gateway is running"
+pause
+
 :: ---------- User Service ------------------
 cd user_management_ms
 

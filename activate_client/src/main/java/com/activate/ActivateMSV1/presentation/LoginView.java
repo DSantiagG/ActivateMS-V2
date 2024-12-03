@@ -206,7 +206,7 @@ public class LoginView {
             interests.clear();
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            lblStatus.setText("Error al registrar usuario");
+            lblStatus.setText(e.getMessage());
         }
 
 

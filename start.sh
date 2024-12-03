@@ -6,6 +6,19 @@ docker rmi rabbitmq:latest
 docker compose up -d
 read -p "RabbitMQ is running. Press enter to continue..."
 
+# ---------- Api Gateway ------------------
+cd api_gateway_ms
+docker compose down
+docker rmi api_gateway_ms-api-gateway:latest
+
+#Crear .jar
+mvn clean package -DskipTests
+
+#Levantar contenedor
+docker compose up -d
+read -p "Api gateway is running. Press enter to continue..."
+cd ..
+
 # ---------- User Service ------------------
 cd user_management_ms
 docker compose down
