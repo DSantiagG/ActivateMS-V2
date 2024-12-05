@@ -1,3 +1,6 @@
+# --------- Red Compartida ------------
+docker network create shared_network
+
 # ---------- RabbitMQ ------------------
 
 docker compose down
@@ -10,6 +13,7 @@ read -p "RabbitMQ is running. Press enter to continue..."
 cd api_gateway_ms
 docker compose down
 docker rmi api_gateway_ms-api-gateway:latest
+
 
 #Crear .jar
 mvn clean package -DskipTests

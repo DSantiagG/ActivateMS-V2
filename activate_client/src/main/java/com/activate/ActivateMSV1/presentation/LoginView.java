@@ -75,7 +75,6 @@ public class LoginView {
 
                 try {
                     tokenManager.setTokens(UserService.login(username, password));
-                    System.out.println(tokenManager.getAccessToken());
                     user = UserService.getUser(username, tokenManager.getAccessToken());
 
                 } catch (Exception ex) {

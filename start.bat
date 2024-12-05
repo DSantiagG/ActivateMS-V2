@@ -1,4 +1,6 @@
 @echo off
+:: --------- Red Compartida ------------
+docker network create shared_network
 
 :: ---------- RabbitMQ ------------------
 docker-compose down

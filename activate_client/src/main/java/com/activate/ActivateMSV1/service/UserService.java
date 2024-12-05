@@ -18,7 +18,7 @@ public class UserService {
     private static String apiUrl = "http://localhost:8084/api/activate/user";
     private static String loginUrl = "http://149.130.167.142:8080/realms/Activate-realm/protocol/openid-connect/token";
     private static String client_id = "activate-gateway-client";
-    private static String client_secret = "CxDIPAMkgigIQd8JN2Y1k4QNp4zZmRqH";
+    private static String client_secret = "Zf9lfnr3o2fra3hk77iXNl9aLs9d7rae";
 
     public static KeycloakResponse login(String username, String password) throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
