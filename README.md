@@ -1,8 +1,11 @@
 ---
 
-# Activate MicroServices V1
+# Activate MicroServices V2
 
-Activate estará diseñado para unir a personas con ideas afines en actividades compartidas para mejorar su bienestar mental. Será una aplicación para conectar personas con intereses compartidos (por ejemplo, la aplicación permite usar la distancia / rango de área preferida como parámetro). Activate se diferencia de una herramienta típica de redes sociales porque no se basa en conexiones conocidas. Las personas usan la aplicación y crean o se unen a un evento (por ejemplo, discusiones sobre películas o pasear perros) en una ubicación determinada.
+Activate está diseñado para unir a personas con ideas afines en actividades compartidas para mejorar su bienestar mental. Es una aplicación para conectar personas con intereses compartidos (por ejemplo, la aplicación permite usar la distancia / rango de área preferida como parámetro). Activate se diferencia de una herramienta típica de redes sociales porque no se basa en conexiones conocidas. Las personas usan la aplicación y crean o se unen a un evento (por ejemplo, discusiones sobre películas o pasear perros) en una ubicación determinada.
+
+# Video Demostración
+https://drive.google.com/file/d/12culQ0x3cbzol6x9kLNZ0z9Jh1jIvC4y/view?usp=sharing
 
 # Ejecución de Micro Servicios
 
